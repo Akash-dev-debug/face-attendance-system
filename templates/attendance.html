@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Take attendance · Checkpoint{% endblock %}
+{% set active = 'attendance' %}
+{% block content %}
+<div class="page-header">
+  <h1>Take attendance</h1>
+  <p>Point the camera at a registered person. Attendance is marked automatically once recognized.</p>
+</div>
+
+<div class="viewfinder">
+  <video id="video" autoplay muted playsinline></video>
+  <canvas id="overlay" class="overlay"></canvas>
+  <div class="corner tl"></div>
+  <div class="corner tr"></div>
+  <div class="corner bl"></div>
+  <div class="corner br"></div>
+  <div class="scan-status mono" id="scan-status">Starting camera...</div>
+</div>
+
+<canvas id="capture-canvas" style="display:none;"></canvas>
+
+<div class="panel" style="max-width:480px; margin: 28px auto 0;">
+  <h2>Recently checked in</h2>
+  <div id="recent-list">
+    <div class="empty-state">No one checked in yet this session.</div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="register-modal" style="display:none;">
+  <div class="modal-box">
+    <h2>We don't recognize this face</h2>
+    <p>If you're new here, you'll need to register before attendance can be marked.</p>
+    <div style="display:flex; gap:10px; margin-top:20px;">
+      <a href="/register" class="btn btn-primary">Register now</a>
+      <button class="btn btn-outline" id="dismiss-modal-btn">Try again</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/attendance.js') }}"></script>
+{% endblock %}

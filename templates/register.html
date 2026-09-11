@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}Register · Checkpoint{% endblock %}
+{% set active = 'register' %}
+{% block content %}
+<div class="page-header">
+  <h1>Register a person</h1>
+  <p>Enter their details, then capture a short sequence of face samples so the system can learn to recognize them.</p>
+</div>
+
+<div class="panel" id="details-panel">
+  <h2>1. Details</h2>
+  <div class="form-group">
+    <label for="name">Full name</label>
+    <input type="text" id="name" placeholder="e.g. Aditi Sharma">
+  </div>
+  <div class="form-group">
+    <label for="reg_no">ID / Roll number</label>
+    <input type="text" id="reg_no" placeholder="e.g. EMP-2043">
+  </div>
+  <div class="form-group">
+    <label for="department">Department (optional)</label>
+    <input type="text" id="department" placeholder="e.g. Design">
+  </div>
+  <button class="btn btn-primary" id="save-details-btn">Save & continue to capture</button>
+</div>
+
+<div class="panel" id="check-panel" style="display:none;">
+  <h2>Checking for an existing registration</h2>
+  <div class="viewfinder">
+    <video id="video" autoplay muted playsinline></video>
+    <div class="corner tl"></div>
+    <div class="corner tr"></div>
+    <div class="corner bl"></div>
+    <div class="corner br"></div>
+    <div class="scan-status mono" id="check-status">Starting camera...</div>
+  </div>
+</div>
+
+<div class="panel" id="capture-panel" style="display:none;">
+  <h2>2. Capture face samples</h2>
+  <p style="color: rgba(35,43,46,0.6); margin-top:-8px; margin-bottom:20px;">
+    Look at the camera and slowly turn your head slightly left, right, up and down while it captures.
+  </p>
+  <div class="viewfinder">
+    <video id="video2" autoplay muted playsinline></video>
+    <div class="corner tl"></div>
+    <div class="corner tr"></div>
+    <div class="corner bl"></div>
+    <div class="corner br"></div>
+    <div class="scan-status mono" id="scan-status">Ready</div>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+  <div style="text-align:center; margin-top:22px;">
+    <button class="btn btn-success" id="start-capture-btn">Start capturing</button>
+  </div>
+</div>
+
+<canvas id="canvas" style="display:none;"></canvas>
+
+<div class="modal-overlay" id="duplicate-modal" style="display:none;">
+  <div class="modal-box">
+    <h2>Already registered</h2>
+    <p id="duplicate-modal-text"></p>
+    <div style="display:flex; gap:10px; margin-top:20px; justify-content:center;">
+      <a href="/attendance" class="btn btn-primary">Go to attendance</a>
+      <button class="btn btn-outline" id="duplicate-try-again-btn">Try different details</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/register.js') }}"></script>
+{% endblock %}

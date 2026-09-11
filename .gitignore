@@ -1,0 +1,9 @@
+venv/
+__pycache__/
+*.pyc
+attendance.db
+trainer/*.yml
+static/dataset/*
+!static/dataset/.gitkeep
+.env
+.DS_Store

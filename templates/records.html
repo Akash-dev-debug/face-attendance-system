@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Records · Checkpoint{% endblock %}
+{% set active = 'records' %}
+{% block content %}
+<div class="page-header">
+  <h1>Attendance records</h1>
+  <p>Search, filter by date, and export the full log. Export and removal are admin-only.</p>
+</div>
+
+<div class="panel" id="admin-panel">
+  <div id="admin-logged-out">
+    <h2>Admin access</h2>
+    <div class="filters">
+      <input type="password" id="admin-password" placeholder="Admin password">
+      <button class="btn btn-primary" id="admin-login-btn">Log in as admin</button>
+    </div>
+  </div>
+  <div id="admin-logged-in" style="display:none;">
+    <h2>Admin access <span class="badge badge-success">Logged in</span></h2>
+    <div class="filters">
+      <button class="btn btn-danger" id="clear-all-btn">Clear all data</button>
+      <button class="btn btn-outline" id="admin-logout-btn">Log out</button>
+    </div>
+  </div>
+</div>
+
+<div class="filters">
+  <input type="date" id="date-filter">
+  <input type="text" id="search-filter" placeholder="Search by name or ID...">
+  <button class="btn btn-outline" id="clear-filters-btn">Clear</button>
+  <button class="btn btn-primary" id="export-btn" style="margin-left:auto;">Export CSV</button>
+</div>
+
+<div class="panel">
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th><th>ID</th><th>Department</th><th>Date</th><th>Time</th><th>Confidence</th>
+      </tr>
+    </thead>
+    <tbody id="records-body"></tbody>
+  </table>
+  <div id="records-empty" class="empty-state" style="display:none;">No records match your filters.</div>
+</div>
+
+<div class="panel">
+  <h2>Registered people ({{ users|length }})</h2>
+  <table>
+    <thead><tr><th>Name</th><th>ID</th><th>Department</th><th></th></tr></thead>
+    <tbody>
+      {% for u in users %}
+      <tr>
+        <td>{{ u.name }}</td>
+        <td class="mono">{{ u.reg_no }}</td>
+        <td>{{ u.department or "—" }}</td>
+        <td><button class="btn btn-danger delete-user-btn" data-id="{{ u.id }}" style="padding:6px 14px; font-size:0.82rem;">Remove</button></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/records.js') }}"></script>
+{% endblock %}

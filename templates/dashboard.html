@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Dashboard · Checkpoint{% endblock %}
+{% set active = 'dashboard' %}
+{% block content %}
+<div class="page-header">
+  <h1>Overview</h1>
+  <p>A snapshot of who's registered and who's checked in today.</p>
+</div>
+
+<div class="stat-grid">
+  <div class="stat-card">
+    <div class="stat-value mono" data-count="{{ stats.total_users }}">0</div>
+    <div class="stat-label">Registered people</div>
+  </div>
+  <div class="stat-card accent">
+    <div class="stat-value mono" data-count="{{ stats.present_today }}">0</div>
+    <div class="stat-label">Present today</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value mono" data-count="{{ stats.absent_today }}">0</div>
+    <div class="stat-label">Not yet checked in</div>
+  </div>
+</div>
+
+<div class="panel">
+  <h2>Last 7 days</h2>
+  <div class="chart-row" id="chart-row"></div>
+</div>
+
+<div class="panel">
+  <h2>Get started</h2>
+  <div class="quick-links">
+    <a href="/register" class="quick-link"><strong>Register a person</strong><span>Add someone new and capture their face</span></a>
+    <a href="/attendance" class="quick-link"><strong>Take attendance</strong><span>Open the camera and start recognizing</span></a>
+    <a href="/records" class="quick-link"><strong>View records</strong><span>Browse and export attendance logs</span></a>
+  </div>
+</div>
+
+<script>
+  // Animate stat numbers counting up
+  document.querySelectorAll('.stat-value[data-count]').forEach(el => {
+    const target = parseInt(el.dataset.count, 10);
+    let current = 0;
+    const step = Math.max(1, Math.ceil(target / 20));
+    const timer = setInterval(() => {
+      current += step;
+      if (current >= target) { current = target; clearInterval(timer); }
+      el.textContent = current;
+    }, 30);
+  });
+
+  // Build the 7-day chart from server data
+  const chartData = {{ stats.last_7_days | tojson }};
+  const chartRow = document.getElementById("chart-row");
+  const maxVal = Math.max(1, ...chartData.map(d => d.count));
+
+  if (chartData.length === 0) {
+    chartRow.innerHTML = '<div class="empty-state" style="width:100%;">No activity yet this week.</div>';
+  } else {
+    chartData.forEach(d => {
+      const heightPct = (d.count / maxVal) * 100;
+      const dateLabel = d.date.slice(5); // MM-DD
+      const wrap = document.createElement("div");
+      wrap.className = "chart-bar-wrap";
+      wrap.innerHTML = `
+        <div class="chart-bar" style="height:${Math.max(6, heightPct)}%;" title="${d.count} present"></div>
+        <div class="chart-label">${dateLabel}</div>
+      `;
+      chartRow.appendChild(wrap);
+    });
+  }
+</script>
+{% endblock %}
